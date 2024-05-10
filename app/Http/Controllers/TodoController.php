@@ -30,7 +30,7 @@ class TodoController extends Controller
             'title' => 'required|string|max:255',
         ]);
 
-        $todo = Todo::create($validatedData);
+        Todo::create($validatedData);
 
         return Redirect::route('todos.index');
     }
@@ -41,6 +41,16 @@ class TodoController extends Controller
     public function update(Request $request, Todo $todo)
     {
         // BRIEF: Validate the request and update the TODO's "completed" status, then redirect back to the index
+
+        $request->validate([
+            'id' => 'required|integer',
+        ]);
+
+        $item = $todo->findOrFail($request->input('id'));
+
+        $item->update(['completed' => !$item->completed]);
+        
+        return Redirect::back()->with('success', 'Todo item updated successfully');;
     }
 
     /**

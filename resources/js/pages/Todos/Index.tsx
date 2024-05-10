@@ -4,6 +4,8 @@ import { Todo } from '@/types';
 import Modal from '@/components/common/Modal';
 import TodoForm from '@/components/TodoForm';
 import Button from '@/components/common/Button';
+import { router } from '@inertiajs/react';
+
 
 interface Props {
     todos: Todo[];
@@ -11,6 +13,14 @@ interface Props {
 
 export default function TodosIndex({ todos }: Props) {
     const [modalOpen, setModalOpen] = React.useState(false);
+
+    const handleToggleTodo = async (id: number) => {
+        try {
+            await router.put(`/todos/update`, { id });
+        } catch (error) {
+            console.error('Error updating todo:', error);
+        }
+    };
 
     return (
         <Layout>
@@ -35,7 +45,7 @@ export default function TodosIndex({ todos }: Props) {
                             <div>
                             <button
                                 className={`mr-2 ${todo.completed ? 'text-green-500' : 'text-gray-500'}`}
-                                // onClick={() => handleToggleTodo(todo.id)}
+                                onClick={() => handleToggleTodo(todo.id)}
                             >
                                 {todo.completed ? 'Completed' : 'Mark Complete'}
                             </button>
