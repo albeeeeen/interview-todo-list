@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class TodoController extends Controller
 {
@@ -25,6 +26,13 @@ class TodoController extends Controller
     public function store(Request $request)
     {
         // BRIEF: Validate the request and save a new TODO, then redirect back to the index
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $todo = Todo::create($validatedData);
+
+        return Redirect::route('todos.index');
     }
 
     /**
