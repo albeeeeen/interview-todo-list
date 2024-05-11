@@ -5,20 +5,36 @@ import Modal from '@/components/common/Modal';
 import TodoForm from '@/components/TodoForm';
 import Button from '@/components/common/Button';
 import { router } from '@inertiajs/react';
-
+import Errors from '@/components/common/Errors';
+import { useSubmit } from '@/lib/forms';
 
 interface Props {
     todos: Todo[];
+    errors?: Record<string, string[]>;
 }
 
-export default function TodosIndex({ todos }: Props) {
+export default function TodosIndex({ todos, errors }: Props) {
     const [modalOpen, setModalOpen] = React.useState(false);
 
-    const handleToggleTodo = async (id: number) => {
+    const handleToggleTodo = (id: number) => {
         try {
-            await router.put(`/todos/update`, { id });
+            router.put(`/todos/update`, { id });
         } catch (error) {
             console.error('Error updating todo:', error);
+        }
+    };
+
+    const onDelete = useSubmit({
+        message: 'Todo deleted',
+    });
+
+    const handleDeleteTodo = (id: number) => {
+        try {
+            
+            router.delete(`todos/${id}`, onDelete);
+            
+        } catch (error) {
+            console.error('Error deleting todo:', error);
         }
     };
 
@@ -35,6 +51,9 @@ export default function TodosIndex({ todos }: Props) {
                     </Button>
 
                     {/* BRIEF: Your code here */}
+                    
+                    <Errors errors={errors} />
+
                     <ul>
                         {todos.map(todo => (
                         <li
@@ -51,7 +70,7 @@ export default function TodosIndex({ todos }: Props) {
                             </button>
                             <button
                                 className="text-red-500"
-                                // onClick={() => handleDeleteTodo(todo.id)}
+                                onClick={() => handleDeleteTodo(todo.id)}
                             >
                                 Delete
                             </button>
